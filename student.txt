@@ -1,65 +1,86 @@
-create table student
+CREATE TABLE STUDENT
 (
-	regno number(2),
-	sname varchar(10),
-	major varchar(10),
-	bdate date,
-	primary key(regno)
+	REGNO NUMBER (5),
+	SNAME VARCHAR(10),
+	MAJOR VARCHAR(10),
+	BDATE DATE,
+	PRIMARY KEY(REGNO)
 );
 
-create table course
+CREATE TABLE COURSE
 (
-	id number(3),
-	cname varchar(10),
-	dept varchar(10),
-	primary key(id)
+	CID NUMBER(5),
+	CNAME VARCHAR(10),
+	DEPT VARCHAR(10),
+	PRIMARY KEY(CID)
 );
 
-create table book
+CREATE TABLE BOOK
 (
-	bid number(3),
-	book_name varchar(10),
-	publisher varchar(10),
-	author varchar(10),
-	primary key(bid)
+	BID NUMBER(5),
+	BNAME VARCHAR(10),
+	PUBLISHER VARCHAR(10),
+	AUTHOR VARCHAR(10),
+	PRIMARY KEY(BID)
 );
 
-create table book_adoption
+CREATE TABLE BOOK_ADOPTION
 (
-	id number(3),
-	sem number(1),
-	bid number(3),
-	primary key(id,bid),
-	foreign key (id) references course(id),
-	foreign key (bid) references book(bid)
+	CID NUMBER(5),
+	SEM NUMBER(1),
+	BID NUMBER(5),
+	PRIMARY KEY(CID,BID),
+	FOREIGN KEY(CID) REFERENCES COURSE(CID),
+	FOREIGN KEY(BID) REFERENCES BOOK(BID)
 );
 
-create table enroll
+CREATE TABLE ENROLL
 (
-	regno number(2),
-	id number(3),
-	sem number(1),
-	marks number(3),
-	foreign key (regno) references student(regno),
-	foreign key (id) references course(id)
+	REGNO NUMBER(5),
+	CID NUMBER(5),
+	SEM NUMBER(1),
+	MARKS NUMBER(5),
+	FOREIGN KEY(REGNO) REFERENCES STUDENT(REGNO),
+	FOREIGN KEY(CID) REFERENCES COURSE(CID)
 );
 
-insert into student values(&regno,'&sname','&major','&bdate');
+INSERT INTO STUDENT VALUES(1,'RAJATH','ISE','01-02-02');
+INSERT INTO STUDENT VALUES(2,'SAM','CSE','12-10-00');
+INSERT INTO STUDENT VALUES(3,'SHAAN','MECH','21-02-01');
+INSERT INTO STUDENT VALUES(4,'TANYA','EC','23-09-01');
+INSERT INTO STUDENT VALUES(5,'AYMAN','CSE','07-10-00');
 
-insert into course values(&id,'&cname','&dept');
+INSERT INTO COURSE VALUES(11,'DCS','CSE');
+INSERT INTO COURSE VALUES(22,'ADA','CSE');
+INSERT INTO COURSE VALUES(33,'CN','EC');
+INSERT INTO COURSE VALUES(44,'TD','MECH');
+INSERT INTO COURSE VALUES(55,'MUP','EC');
 
-insert into book values(&bid,'&book_name','&publisher','&author');
+INSERT INTO BOOK VALUES(772,'VB','PHI','HOLZNER');
+INSERT INTO BOOK VALUES(114,'DS WITH C','SAPNA','NANDAGOPAL');
+INSERT INTO BOOK VALUES(440,'C PROG','PHI','BALAGURU');
+INSERT INTO BOOK VALUES(556,'CN','PHI','TENENBAUM');
+INSERT INTO BOOK VALUES(338,'MP','TATA','BREY');
 
-insert into book_adoption values(&id,&sem,&bid);
+INSERT INTO BOOK_ADOPTION VALUES(11,3,772);
+INSERT INTO BOOK_ADOPTION VALUES(22,4,772);
+INSERT INTO BOOK_ADOPTION VALUES(11,5,440);
+INSERT INTO BOOK_ADOPTION VALUES(11,8,556);
+INSERT INTO BOOK_ADOPTION VALUES(55,4,338);
 
-insert into enroll values(&regno,&id,&sem,&marks);
- 
-insert into book values(650,'ALGORITHM','SAPNA','REEMA');
+INSERT INTO ENROLL VALUES(1,22,5,76);
+INSERT INTO ENROLL VALUES(1,11,3,90);
+INSERT INTO ENROLL VALUES(2,33,6,55);
+INSERT INTO ENROLL VALUES(3,22,5,75);
+INSERT INTO ENROLL VALUES(5,44,5,75);
 
-insert into book_adoption values(22,4,650);
-                               
-select c.cname,b.bid,b.book_name from course c,book b,book_adoption ba where c.id in 
-(select ba.id from book_adoption ba,course c where c.dept='cse' and c.id=ba.id group by ba.id having count(*)>2) 
-and c.id=ba.id and b.bid=ba.bid order by c.cname;
+INSERT INTO BOOK VALUES(650,'ALGORITHM','SAPNA','REEMA');
+INSERT INTO BOOK_ADOPTION VALUES(22,4,650);
+SELECT * FROM BOOK;
+SELECT * FROM BOOK_ADOPTION;
 
- 
+SELECT C.CNAME,B.BID,B.BNAME FROM BOOK B,COURSE C,BOOK_ADOPTION BA WHERE C.CID=BA.CID AND B.BID=BA.BID AND C.CID=(SELECT BA.CID FROM COURSE C,BOOK_ADOPTION BA WHERE C.CID=BA.CID AND C.DEPT="CSE" GROUP BY BA.CID HAVING COUNT(*)>2);
+
+SELECT C.CID,C.CNAME FROM COURSE C,BOOK_ADOPTION BA,BOOK B WHERE C.CID=BA.CID AND B.BID=BA.BID AND B.BID=ALL(SELECT BID FROM BOOK WHERE PUBLISHER="PHI");
+
+SELECT CID FROM BOOK_ADOPTION WHERE BID=ALL(SELECT BID FROM BOOK WHERE PUBLISHER="PHI"tests);
