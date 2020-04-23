@@ -1,0 +1,65 @@
+create table student
+(
+	regno number(2),
+	sname varchar(10),
+	major varchar(10),
+	bdate date,
+	primary key(regno)
+);
+
+create table course
+(
+	id number(3),
+	cname varchar(10),
+	dept varchar(10),
+	primary key(id)
+);
+
+create table book
+(
+	bid number(3),
+	book_name varchar(10),
+	publisher varchar(10),
+	author varchar(10),
+	primary key(bid)
+);
+
+create table book_adoption
+(
+	id number(3),
+	sem number(1),
+	bid number(3),
+	primary key(id,bid),
+	foreign key (id) references course(id),
+	foreign key (bid) references book(bid)
+);
+
+create table enroll
+(
+	regno number(2),
+	id number(3),
+	sem number(1),
+	marks number(3),
+	foreign key (regno) references student(regno),
+	foreign key (id) references course(id)
+);
+
+insert into student values(&regno,'&sname','&major','&bdate');
+
+insert into course values(&id,'&cname','&dept');
+
+insert into book values(&bid,'&book_name','&publisher','&author');
+
+insert into book_adoption values(&id,&sem,&bid);
+
+insert into enroll values(&regno,&id,&sem,&marks);
+ 
+insert into book values(650,'ALGORITHM','SAPNA','REEMA');
+
+insert into book_adoption values(22,4,650);
+                               
+select c.cname,b.bid,b.book_name from course c,book b,book_adoption ba where c.id in 
+(select ba.id from book_adoption ba,course c where c.dept='cse' and c.id=ba.id group by ba.id having count(*)>2) 
+and c.id=ba.id and b.bid=ba.bid order by c.cname;
+
+ 
